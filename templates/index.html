@@ -152,16 +152,28 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ query, location })
                     });
+
+                    const contentType = res.headers.get("content-type");
+                    if (!contentType || !contentType.includes("application/json")) {
+                        const text = await res.text();
+                        if (window.location.hostname.includes('onrender.com')) {
+                            alert('AVISO RENDER: A versão grátis permite apenas buscas rápidas (até 30s). Para extrair 200 leads, abra o projeto no seu computador (Local).');
+                        } else {
+                            alert('Erro no servidor. Tente uma busca com menos resultados.');
+                        }
+                        return;
+                    }
+
                     const data = await res.json();
 
                     if (res.ok) {
                         allResults = data;
                         renderResults();
                     } else {
-                        alert('Erro na mineração. Tente novamente em alguns segundos.');
+                        alert(data.error || 'Erro na mineração. Tente novamente.');
                     }
                 } catch (err) {
-                    alert('Erro de conexão: ' + err.message);
+                    alert('Erro de conexão: Verifique se o servidor está ativo.');
                 } finally {
                     statusDisplay.classList.add('hidden');
                 }
