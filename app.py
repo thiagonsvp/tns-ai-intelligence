@@ -124,7 +124,7 @@ def search():
     if not query:
         return jsonify({"error": "O campo de busca é obrigatório."}), 400
 
-    print(f"DEBUG: [PROD] Iniciando busca para '{query}' em '{location}'...")
+    print(f"DEBUG: [PROD] Iniciando busca rápida (Meta: 22) para '{query}' em '{location}'...")
     
     search_term = f"{query} {location}"
     results_list = []
@@ -158,12 +158,12 @@ def search():
 
             seen_names = set()
             
-            print("DEBUG: Carregando lista completa...")
-            for s in range(35):
+            print("DEBUG: Carregando lista inicial...")
+            # Reduced scrolls for speed on Render
+            for s in range(3):
                 page.hover(feed_selector)
                 page.mouse.wheel(0, 5000)
-                page.wait_for_timeout(1500)
-                if "Você chegou ao fim da lista" in page.content(): break
+                page.wait_for_timeout(1000)
 
             cards = page.locator('div[role="article"]').all()
             if not cards: cards = page.locator('a.hfpxzc').all()
@@ -171,7 +171,7 @@ def search():
             print(f"DEBUG: Processando {len(cards)} itens...")
 
             for i, card in enumerate(cards):
-                if len(results_list) >= 210: break
+                if len(results_list) >= 22: break
                 
                 try:
                     card.scroll_into_view_if_needed()
