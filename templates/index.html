@@ -187,22 +187,41 @@
 
                 allResults.forEach(item => {
                     const card = document.createElement('div');
-                    card.className = 'result-card bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all';
+                    card.className = 'result-card bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all group';
                     card.innerHTML = `
                         <div class="flex flex-col h-full uppercase tracking-tight">
-                            <h3 class="font-bold text-lg mb-2 leading-tight text-slate-800 dark:text-slate-100">${item.name}</h3>
-                            <div class="flex items-center gap-2 mb-4">
-                                <span class="text-amber-500 font-bold flex items-center gap-1 text-sm"><i class="bi bi-star-fill"></i> ${item.rating}</span>
+                            <h3 class="font-bold text-lg mb-2 leading-tight text-slate-800 dark:text-slate-100 group-hover:text-blue-600 transition-colors">${item.name}</h3>
+                            
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-500 px-3 py-1 rounded-full text-xs font-black flex items-center gap-1">
+                                    <i class="bi bi-star-fill"></i> ${item.rating}
+                                </span>
                                 <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-lg text-[10px] font-black tracking-widest">MAPS</span>
+                                
+                                ${item.website && item.website !== "N/A" ? `
+                                    <a href="${item.website}" target="_blank" class="text-[10px] font-bold text-blue-500 hover:underline"><i class="bi bi-globe"></i> SITE</a>
+                                ` : ''}
+                                
+                                ${item.instagram && item.instagram !== "N/A" ? `
+                                    <a href="${item.instagram}" target="_blank" class="text-[10px] font-bold text-pink-500 hover:underline"><i class="bi bi-instagram"></i> INSTA</a>
+                                ` : ''}
                             </div>
-                            <p class="text-[11px] opacity-40 mb-6 flex-grow line-clamp-2">${item.address}</p>
-                            <div class="mb-6">
+
+                            <p class="text-[11px] opacity-40 mb-6 flex-grow line-clamp-2"><i class="bi bi-geo-alt-fill mr-1"></i> ${item.address}</p>
+                            
+                            <div class="mb-6 p-4 bg-gray-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-gray-200 dark:border-slate-700">
                                 <div class="text-[10px] font-bold opacity-30 mb-1">CONTATO</div>
-                                <div class="text-slate-900 dark:text-slate-100 font-black text-xl">${item.phone}</div>
+                                <div class="text-slate-900 dark:text-slate-100 font-black text-xl tracking-tighter">${item.phone}</div>
                             </div>
-                            <a href="${item.wa_url}" target="_blank" class="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-bold shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
-                                <i class="bi bi-whatsapp"></i> WHATSAPP
-                            </a>
+
+                            <div class="flex gap-3">
+                                <a href="${item.wa_url}" target="_blank" class="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-bold shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
+                                    <i class="bi bi-whatsapp"></i> WHATSAPP
+                                </a>
+                                <a href="${item.maps_link}" target="_blank" class="w-14 items-center justify-center flex bg-slate-100 dark:bg-slate-700 text-slate-500 rounded-2xl hover:bg-slate-200 transition-all">
+                                    <i class="bi bi-geo-fill"></i>
+                                </a>
+                            </div>
                         </div>
                     `;
                     resultsGrid.appendChild(card);
