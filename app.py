@@ -100,6 +100,14 @@ def delete_history(id):
     conn.close()
     return redirect(url_for('history_page'))
 
+@app.errorhandler(500)
+def handle_500(e):
+    return jsonify({"error": "Erro interno no servidor. O robô pode estar sobrecarregado ou reiniciando."}), 500
+
+@app.errorhandler(404)
+def handle_404(e):
+    return jsonify({"error": "Página não encontrada."}), 404
+
 def clean_txt(text):
     if not text: return ""
     # Remove non-printable characters but keep standard Portuguese/Latin characters
@@ -113,14 +121,26 @@ def search():
     location = data.get('location', '')
     query = data.get('query', '')
 
-    print(f"DEBUG: TNS AI iniciando MINERAÇÃO EM MASSA (Meta: 200) para '{query}' em '{location}'...")
+    if not query:
+        return jsonify({"error": "O campo de busca é obrigatório."}), 400
+
+    print(f"DEBUG: [PROD] Iniciando busca para '{query}' em '{location}'...")
     
     search_term = f"{query} {location}"
     results_list = []
     
+    # Ensure DB is ready
+    try:
+        init_db()
+    except: pass
+
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            # Added flags for Docker compatibility
+            browser = p.chromium.launch(
+                headless=True,
+                args=['--no-sandbox', '--disable-dev-shm-usage', '--disable-setuid-sandbox']
+            )
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
             )
