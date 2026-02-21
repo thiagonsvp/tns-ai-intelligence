@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico - TNS AI INTELIGENCE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen">
+    <nav
+        class="sticky top-0 z-40 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 p-4 shadow-sm">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-3">
+                <a href="/" class="hover:text-blue-500 transition-colors"><i class="bi bi-arrow-left"></i></a>
+                <span>TNS <span class="text-blue-600">AI INTELIGENCE</span></span>
+            </h1>
+            <div class="flex gap-4">
+                <a href="/api/export/merged"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
+                    <i class="bi bi-layers-half"></i> Mesclar e Exportar Tudo
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 py-10">
+        <div
+            class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-slate-700">
+            <div class="p-6 border-b border-gray-100 dark:border-slate-700">
+                <h2 class="text-lg font-bold">Histórico de Extrações</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 dark:bg-slate-700/50">
+                        <tr>
+                            <th class="px-6 py-4 text-xs font-bold uppercase opacity-50">Data</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase opacity-50">Pesquisa</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase opacity-50">Leads</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase opacity-50 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
+                        {% for search in searches %}
+                        <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
+                            <td class="px-6 py-4 text-sm">{{ search[4] }}</td>
+                            <td class="px-6 py-4">
+                                <div class="font-bold">{{ search[1] }}</div>
+                                <div class="text-xs opacity-50">{{ search[2] }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full text-xs font-bold">
+                                    {{ search[3] }} leads
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex justify-end gap-2 text-sm">
+                                    <a href="/history/view/{{ search[0] }}"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl font-bold">
+                                        Ver
+                                    </a>
+                                    <a href="/api/export/{{ search[0] }}"
+                                        class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 px-3 py-2 rounded-xl">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                    <form action="/history/delete/{{ search[0] }}" method="POST"
+                                        onsubmit="return confirm('Excluir esta pesquisa?');">
+                                        <button type="submit"
+                                            class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-xl">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-20 text-center opacity-30 italic">Nenhum histórico
+                                encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
