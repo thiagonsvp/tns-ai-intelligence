@@ -1,29 +1,5 @@
-# Use uma imagem base do Python oficial
-FROM python:3.10-slim
-
-# Instala as dependências do sistema necessárias para o Playwright/Chromium
-RUN apt-get update && apt-get install -y \
-    libglib2.0-0 \
-    libnss3 \
-    libnspr4 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libdbus-1-3 \
-    libxcb1 \
-    libxkbcommon0 \
-    libx11-6 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    librandr2 \
-    libgbm1 \
-    libasound2 \
-    libpango-1.0-0 \
-    libcairo2 \
-    && rm -rf /var/lib/apt/lists/*
+# Use a imagem oficial do Playwright para Python (já vem com navegadores e dependências)
+FROM mcr.microsoft.com/playwright/python:v1.41.0-jammy
 
 # Define o diretório de trabalho
 WORKDIR /app
@@ -32,15 +8,15 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Instala o navegador Chromium do Playwright
+# Instala apenas o Chromium (para economizar espaço)
 RUN playwright install chromium
-RUN playwright install-deps chromium
 
 # Copia o resto do código
 COPY . .
 
-# Expõe a porta que o Render vai usar
-EXPOSE 5000
+# Define a porta padrão (o Render sobrescreve isso com a variável PORT)
+ENV PORT 5000
 
-# Comando para iniciar a aplicação com Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app", "--timeout", "600"]
+# Inicia a aplicação usando gunicorn
+# Usamos a variável $PORT do sistema
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:$PORT app:app --timeout 600"]
